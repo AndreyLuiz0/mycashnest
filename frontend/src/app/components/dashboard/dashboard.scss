@@ -1,0 +1,455 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'Arial', sans-serif;
+}
+
+.header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
+  background: #4caf50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.page-title {
+  color: #666;
+  font-size: 14px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: #4caf50;
+  color: white;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.icon-btn:hover {
+  background: #f0f0f0;
+}
+
+.dashboard-content {
+  padding: 0 30px 30px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chart-container {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Categoria Chart */
+.category-chart {
+  grid-column: 1;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Margem do Período */
+.period-margin {
+  grid-column: 2;
+}
+
+.margin-content {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.donut-chart {
+  flex: 1;
+  height: 150px;
+}
+
+.calendar {
+  flex: 1;
+  min-width: 200px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.nav-btn:hover {
+  background: #f0f0f0;
+}
+
+.month-year {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.day-header {
+  text-align: center;
+  font-size: 10px;
+  color: #666;
+  padding: 4px;
+  font-weight: 600;
+}
+
+.day {
+  text-align: center;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.day:hover {
+  background: #f0f0f0;
+}
+
+.day.active {
+  background: #4caf50;
+  color: white;
+}
+
+.day.today {
+  background: #e8f5e8;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* Perfil do Usuário */
+.user-profile {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-section {
+  text-align: center;
+}
+
+.user-avatar {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.profile-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.user-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #f9f9f9;
+}
+
+.transactions-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.transaction-desc {
+  color: #333;
+}
+
+.transaction-status {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.transaction-status.paid {
+  color: #4caf50;
+}
+
+.transaction-status:not(.paid) {
+  color: #f44336;
+}
+
+/* Gráfico de Tendências */
+.trend-chart {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/* Gráfico de Barras */
+.bar-chart {
+  grid-column: 2 / 4;
+  grid-row: 2;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .category-chart {
+    grid-column: 1;
+  }
+  
+  .period-margin {
+    grid-column: 2;
+  }
+  
+  .user-profile {
+    grid-column: 1 / 3;
+    grid-row: 2;
+  }
+  
+  .trend-chart {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  
+  .bar-chart {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
+/* Botão Flutuante */
+.floating-add-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: #4caf50;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.floating-add-btn:hover {
+  background: #45a049;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.add-icon {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header {
+    padding: 15px 20px;
+  }
+  
+  .dashboard-content {
+    padding: 0 20px 20px;
+  }
+  
+  .margin-content {
+    flex-direction: column;
+  }
+  
+  .calendar {
+    min-width: auto;
+  }
+  
+  .category-chart,
+  .period-margin,
+  .user-profile,
+  .trend-chart,
+  .bar-chart {
+    grid-column: 1;
+  }
+  
+  .floating-add-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .add-icon {
+    font-size: 20px;
+  }
+}
+
+
+
+.profile-menu-wrapper {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+.dropdown-icon {
+  font-size: 16px;
+}

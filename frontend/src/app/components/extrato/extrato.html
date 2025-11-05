@@ -1,0 +1,144 @@
+<div class="extrato-container">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-text">mycashnest</span>
+      </div>
+    </div>
+
+    <nav class="header-nav">
+      <a routerLink="/extrato" class="nav-link active">Extrato</a>
+      <a routerLink="/dashboard" class="nav-link">Inicio</a>
+      <button class="icon-btn">
+        <span class="icon">⚙️</span>
+      </button>
+      <button class="icon-btn">
+        <span class="icon">👤</span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="content-wrapper">
+    <div class="page-title">
+      <h1>tela de lançamentos/despesas</h1>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="tab-btn" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+        Geral
+      </button>
+      <button class="tab-btn" [class.active]="activeFilter === 'income'" (click)="setFilter('income')">
+        Entrada
+      </button>
+      <button class="tab-btn" [class.active]="activeFilter === 'expense'" (click)="setFilter('expense')">
+        Despesas
+      </button>
+    </div>
+
+    <div class="transactions-container">
+      <div class="transactions-header">
+        <div class="header-row">
+          <div class="col-checkbox">
+            <input type="checkbox" class="select-all" (change)="toggleSelectAll($event)">
+          </div>
+          <div class="col-date">Data</div>
+          <div class="col-description">Descrição</div>
+          <div class="col-value">Valor</div>
+          <div class="col-status">Status</div>
+        </div>
+      </div>
+
+      <!-- Nova Transação -->
+      <div class="new-transaction-row" *ngIf="showNewTransaction">
+        <div class="col-checkbox"></div>
+        <div class="col-date">
+          <input type="date" [(ngModel)]="newTransaction.date" class="form-input">
+        </div>
+        <div class="col-description">
+          <input type="text" [(ngModel)]="newTransaction.description" placeholder="Descrição" class="form-input">
+        </div>
+        <div class="col-value">
+          <input type="number" [(ngModel)]="newTransaction.amount" placeholder="0,00" class="form-input">
+        </div>
+        <div class="col-status">
+          <select [(ngModel)]="newTransaction.type" class="form-select" style="margin-bottom: 5px;">
+            <option value="expense">Despesa</option>
+            <option value="income">Receita</option>
+          </select>
+          <select [(ngModel)]="newTransaction.status" class="form-select">
+            <ng-container *ngIf="newTransaction.type === 'expense'">
+              <option value="paid">Pago</option>
+              <option value="unpaid">Não Pago</option>
+            </ng-container>
+            <ng-container *ngIf="newTransaction.type === 'income'">
+              <option value="received">Recebido</option>
+              <option value="pending">A Receber</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="col-actions">
+          <button class="btn-save" (click)="saveTransaction()" [disabled]="isLoading">
+            {{ isLoading ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelNewTransaction()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Lista de Transações -->
+      <div class="transactions-list">
+        <div class="transaction-row" *ngFor="let transaction of filteredTransactions; trackBy: trackByTransactionId">
+          <div class="col-checkbox">
+            <input type="checkbox" [(ngModel)]="transaction.selected" class="transaction-checkbox">
+          </div>
+          <div class="col-date">{{ transaction.date | date:'dd/MM/yyyy' }}</div>
+          <div class="col-description">{{ transaction.description }}</div>
+          <div class="col-value" [class.income]="transaction.type === 'income'" [class.expense]="transaction.type === 'expense'">
+            {{ transaction.amount | currency:'BRL':'symbol':'1.2-2':'pt' }}
+          </div>
+          <div class="col-status">
+            <select [(ngModel)]="transaction.status" class="status-select"
+              (change)="updateTransactionStatus(transaction)">
+              <!-- Para despesas -->
+              <ng-container *ngIf="transaction.type === 'expense'">
+                <option value="paid">Pago</option>
+                <option value="unpaid">Não Pago</option>
+              </ng-container>
+              <!-- Para receitas -->
+              <ng-container *ngIf="transaction.type === 'income'">
+                <option value="received">Recebido</option>
+                <option value="pending">A Receber</option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="col-actions">
+            <button class="btn-delete" (click)="deleteTransaction(transaction.id)">🗑️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão Nova Transação -->
+      <div class="new-transaction-section" *ngIf="!showNewTransaction">
+        <button class="new-transaction-btn" (click)="showNewTransactionForm()">
+          Nova transação
+        </button>
+      </div>
+    </div>
+
+    <div class="summary-footer">
+      <div class="summary-stats">
+        <div class="stat-box">
+          <div class="stat-label">Pago/Recebido:</div>
+          <div class="stat-value">{{ paidTotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Não pago/A receber:</div>
+          <div class="stat-value">{{ unpaidTotal | currency:'BRL':'symbol':'1.2-2':'pt' }}</div>
+        </div>
+      </div>
+
+      <div class="total-amount">
+        <strong>Total: {{ totalAmount | currency:'BRL':'symbol':'1.2-2':'pt' }}</strong>
+      </div>
+    </div>
+  </div>
+</div>

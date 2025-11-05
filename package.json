@@ -1,0 +1,27 @@
+{
+  "name": "sistema-financeiro-mycashnest",
+  "version": "1.0.0",
+  "description": "Sistema financeiro completo com Angular e Node.js",
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && ng serve",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && ng build",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\" --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,green\""
+  },
+  "keywords": [
+    "angular",
+    "nodejs",
+    "sqlite",
+    "financeiro"
+  ],
+  "author": "Andrey",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
+}

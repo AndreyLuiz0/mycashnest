@@ -1,0 +1,133 @@
+<div class="dashboard-container">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-text">mycashnest</span>
+      </div>
+    </div>
+    
+    <nav class="header-nav">
+      <a routerLink="/extrato" class="nav-link">Extrato</a>
+      <a routerLink="/dashboard" class="nav-link active">Inicio</a>
+      <button class="icon-btn">
+        <span class="icon">⚙️</span>
+      </button>
+      <div class="profile-menu-wrapper">
+    <button class="icon-btn" (click)="toggleProfileMenu()">
+      <span class="icon">👤</span>
+    </button>
+    <div class="profile-dropdown" *ngIf="showProfileMenu">
+      <button class="dropdown-item" (click)="logout()">
+        <span class="dropdown-icon">🚪</span>
+        Sair
+      </button>
+    </div>
+  </div>
+    </nav>
+  </header>
+
+  <main class="dashboard-content">
+    <div class="dashboard-grid">
+      <!-- Gráfico de Categorias -->
+      <div class="card category-chart">
+        <h3>Distribuição por Categorias</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="categoryChartData"
+            [type]="'pie'"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item" *ngFor="let item of categoryLegend">
+            <span class="legend-color" [style.background-color]="item.color"></span>
+            <span class="legend-label">{{ item.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Margem do Período -->
+      <div class="card period-margin">
+        <h3>Margem Periodo</h3>
+        <div class="margin-content">
+          <div class="donut-chart">
+            <canvas baseChart
+              [data]="marginChartData"
+              [type]="'doughnut'"
+              [options]="donutOptions">
+            </canvas>
+          </div>
+          <div class="calendar">
+            <div class="calendar-header">
+              <button class="nav-btn" (click)="previousMonth()">‹</button>
+              <span class="month-year">{{ currentMonth | date:'MMMM yyyy' }}</span>
+              <button class="nav-btn" (click)="nextMonth()">›</button>
+            </div>
+            <div class="calendar-grid">
+              <div class="day-header" *ngFor="let day of weekDays">{{ day }}</div>
+              <div class="day" 
+                   *ngFor="let day of calendarDays" 
+                   [class.active]="day.active"
+                   [class.today]="day.isToday">
+                {{ day.day }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil do Usuário e Últimos Lançamentos -->
+      <div class="card user-profile">
+        <div class="profile-section">
+          <div class="user-avatar">👤</div>
+          <h4>{{ currentUser?.name || 'Nome usuario' }}</h4>
+          <div class="user-inputs">
+            <input type="text" placeholder="Nome" class="user-input">
+            <input type="email" placeholder="Email" class="user-input">
+          </div>
+        </div>
+        
+        <div class="transactions-section">
+          <h4>ultimos lançamentos</h4>
+          <div class="transaction-list">
+            <div class="transaction-item" *ngFor="let transaction of recentTransactions">
+              <span class="transaction-desc">{{ transaction.description }}</span>
+              <span class="transaction-status" [class.paid]="transaction.status === 'paid'">
+                {{ transaction.status === 'paid' ? '✓' : '✗' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de Tendências -->
+      <div class="card trend-chart">
+        <h3>Tendências</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="trendChartData"
+            [type]="'line'"
+            [options]="lineChartOptions">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Gráfico de Barras -->
+      <div class="card bar-chart">
+        <h3>Receitas vs Despesas</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="barChartData"
+            [type]="'bar'"
+            [options]="barChartOptions">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Botão Flutuante para Nova Transação -->
+  <button class="floating-add-btn" (click)="navigateToExtrato()" title="Nova Transação">
+    <span class="add-icon">+</span>
+  </button>
+</div>

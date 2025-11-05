@@ -1,0 +1,112 @@
+<div class="login-container">
+  <div class="left-panel">
+    <div class="brand-section">
+      <div class="logo">
+        <div class="house-icon">
+          <span class="dollar-sign">$</span>
+        </div>
+        <div class="nest-lines">
+          <div class="line line-1"></div>
+          <div class="line line-2"></div>
+        </div>
+      </div>
+      <h1 class="brand-name">mycashnest</h1>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-container">
+      <div class="header">
+        <h2 class="title">Mycashnest</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="login-options">
+        <button class="google-login-btn" (click)="loginWithGoogle()">
+          <span class="google-icon">G</span>
+          Entrar com Google
+        </button>
+
+        <div class="form-section">
+          <div class="input-group">
+            <input 
+              type="email" 
+              placeholder="E-mail" 
+              [(ngModel)]="email"
+              class="form-input"
+            >
+          </div>
+          
+          <div class="input-group">
+            <input 
+              type="password" 
+              placeholder="Senha" 
+              [(ngModel)]="password"
+              class="form-input"
+            >
+          </div>
+
+          <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-login" (click)="login()" [disabled]="loading">
+            {{ loading ? 'Entrando...' : 'Entrar' }}
+          </button>
+          <button class="btn btn-register" (click)="showRegister = true">
+            Cadastro
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Cadastro -->
+<div class="modal-overlay" *ngIf="showRegister" (click)="closeRegister()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Cadastro</h3>
+      <button class="close-btn" (click)="closeRegister()">&times;</button>
+    </div>
+    
+    <form class="register-form" (ngSubmit)="register()">
+      <div class="input-group">
+        <input 
+          type="text" 
+          placeholder="Nome completo" 
+          [(ngModel)]="registerData.name"
+          name="name"
+          required
+          class="form-input"
+        >
+      </div>
+      
+      <div class="input-group">
+        <input 
+          type="email" 
+          placeholder="E-mail" 
+          [(ngModel)]="registerData.email"
+          name="email"
+          required
+          class="form-input"
+        >
+      </div>
+      
+      <div class="input-group">
+        <input 
+          type="password" 
+          placeholder="Senha" 
+          [(ngModel)]="registerData.password"
+          name="password"
+          required
+          class="form-input"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Cadastrando...' : 'Cadastrar' }}
+      </button>
+    </form>
+  </div>
+</div>
