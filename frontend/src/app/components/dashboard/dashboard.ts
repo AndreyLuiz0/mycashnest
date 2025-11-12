@@ -6,6 +6,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 
 import { AuthService, User } from '../../services/auth.service';
 import { TransactionService, Transaction } from '../../services/transaction.service';
+import { ChatbotComponent } from '../chatbot/chatbot';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +22,12 @@ export class DashboardComponent implements OnInit {
   weekDays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
   calendarDays: any[] = [];
   showProfileMenu = false;
+
+//seleção de período
+  selectedStartDate: Date | null = null;
+  selectedEndDate: Date | null = null;
+  isSelectingPeriod = false;
+  allTransactions: Transaction[] = []; // Armazena todas as transações
 
   // Dados dos gráficos
   categoryChartData: ChartConfiguration<'pie'>['data'] = {
@@ -156,7 +163,7 @@ export class DashboardComponent implements OnInit {
       next: (transactions) => {
         this.recentTransactions = transactions
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 8);
+          .slice(0, 5);
       },
       error: (error) => {
         console.error('Erro ao carregar transações:', error);
@@ -177,62 +184,107 @@ export class DashboardComponent implements OnInit {
   }
 
   updateChartsWithTransactions(transactions: Transaction[]): void {
-    // Agrupar por categoria
-    const categoryMap = new Map<string, number>();
-    let totalIncome = 0;
-    let totalExpense = 0;
+  // Agrupar por STATUS
+  const statusMap = new Map<string, number>();
+  let totalIncome = 0;
+  let totalExpense = 0;
 
-    transactions.forEach(t => {
-      const category = t.category || 'Sem categoria';
-      const amount = t.amount || 0;
+  transactions.forEach(t => {
+    const amount = t.amount || 0;
 
-      if (t.type === 'expense') {
-        categoryMap.set(category, (categoryMap.get(category) || 0) + amount);
-        totalExpense += amount;
-      } else {
-        totalIncome += amount;
-      }
-    });
-
-    // Atualizar gráfico de categorias
-    if (categoryMap.size > 0) {
-      const categories = Array.from(categoryMap.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-      const colors = ['#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336'];
-
-      this.categoryChartData = {
-        labels: categories.map(([cat]) => cat),
-        datasets: [{
-          data: categories.map(([, total]) => total),
-          backgroundColor: colors.slice(0, categories.length),
-          borderWidth: 0
-        }]
-      };
-
-      this.categoryLegend = categories.map(([cat], index) => ({
-        label: cat,
-        color: colors[index]
-      }));
+    // Mapear o status para labels em português
+    let statusLabel = '';
+    switch (t.status) {
+      case 'paid':
+        statusLabel = 'Pago';
+        break;
+      case 'unpaid':
+        statusLabel = 'Não Pago';
+        break;
+      case 'pending':
+        statusLabel = 'A Receber';
+        break;
+      case 'received':
+        statusLabel = 'Recebido';
+        break;
+      default:
+        statusLabel = 'Sem Status';
     }
 
-    // Atualizar gráfico de margem (receitas vs despesas)
-    const total = totalIncome + totalExpense;
-    if (total > 0) {
-      this.marginChartData = {
-        labels: ['Receitas', 'Despesas'],
-        datasets: [{
-          data: [totalIncome, totalExpense],
-          backgroundColor: ['#4caf50', '#f44336'],
-          borderWidth: 0
-        }]
-      };
-    }
+    // Acumular valores por status
+    statusMap.set(statusLabel, (statusMap.get(statusLabel) || 0) + amount);
 
-    // Atualizar gráfico de tendências (últimos 6 meses)
-    this.updateTrendChart(transactions);
+    // Calcular totais para o gráfico de margem
+    if (t.type === 'expense') {
+      totalExpense += amount;
+    } else {
+      totalIncome += amount;
+    }
+  });
+
+  // Atualizar gráfico de STATUS (Distribuição por Categorias)
+  if (statusMap.size > 0) {
+    // Ordenar por valor (maior para menor)
+    const statuses = Array.from(statusMap.entries())
+      .sort((a, b) => b[1] - a[1]);
+
+    // Cores específicas para cada status
+    const colorMap: { [key: string]: string } = {
+      'Pago': '#4caf50',        // Verde - despesa paga
+      'Não Pago': '#f44336',    // Vermelho - despesa não paga
+      'Recebido': '#2196f3',    // Azul - receita recebida
+      'A Receber': '#ff9800',   // Laranja - receita a receber
+      'Sem Status': '#9e9e9e'   // Cinza - sem status
+    };
+
+    const colors = statuses.map(([status]) => colorMap[status] || '#9e9e9e');
+
+    this.categoryChartData = {
+      labels: statuses.map(([status]) => status),
+      datasets: [{
+        data: statuses.map(([, total]) => total),
+        backgroundColor: colors,
+        borderWidth: 0
+      }]
+    };
+
+    this.categoryLegend = statuses.map(([status], index) => ({
+      label: status,
+      color: colors[index]
+    }));
+  } else {
+    // Se não houver transações, mostrar gráfico vazio
+    this.categoryChartData = {
+      labels: ['Sem dados'],
+      datasets: [{
+        data: [1],
+        backgroundColor: ['#e0e0e0'],
+        borderWidth: 0
+      }]
+    };
+
+    this.categoryLegend = [{
+      label: 'Nenhuma transação encontrada',
+      color: '#e0e0e0'
+    }];
   }
+
+  // Atualizar gráfico de margem (receitas vs despesas)
+  const total = totalIncome + totalExpense;
+  if (total > 0) {
+    this.marginChartData = {
+      labels: ['Receitas', 'Despesas'],
+      datasets: [{
+        data: [totalIncome, totalExpense],
+        backgroundColor: ['#4caf50', '#f44336'],
+        borderWidth: 0
+      }]
+    };
+  }
+
+  // Atualizar gráfico de tendências (últimos 6 meses)
+  this.updateTrendChart(transactions);
+}
 
   updateTrendChart(transactions: Transaction[]): void {
     const now = new Date();
@@ -336,6 +388,10 @@ export class DashboardComponent implements OnInit {
       };
     }
   }
+  isToday(date: Date): boolean {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  }
 
   navigateToExtrato(): void {
     this.router.navigate(['/extrato']);
@@ -355,6 +411,8 @@ export class DashboardComponent implements OnInit {
     // Carregar transações do mês para marcar no calendário
     this.transactionService.getTransactions().subscribe({
       next: (transactions) => {
+        this.allTransactions = transactions; // Armazena todas
+        
         const transactionDates = new Set(
           transactions
             .filter(t => {
@@ -373,32 +431,111 @@ export class DashboardComponent implements OnInit {
             date: new Date(date),
             active: date.getMonth() === month && transactionDates.has(date.getDate()),
             isToday: this.isToday(date),
-            isCurrentMonth: date.getMonth() === month
+            isCurrentMonth: date.getMonth() === month,
+            isSelected: this.isDateInRange(date),
+            isRangeStart: this.isDateEqual(date, this.selectedStartDate),
+            isRangeEnd: this.isDateEqual(date, this.selectedEndDate)
           });
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar transações para o calendário:', error);
-        // Gera calendário sem marcações em caso de erro
-        for (let i = 0; i < 42; i++) {
-          const date = new Date(startDate);
-          date.setDate(startDate.getDate() + i);
-          
-          this.calendarDays.push({
-            day: date.getDate(),
-            date: new Date(date),
-            active: false,
-            isToday: this.isToday(date),
-            isCurrentMonth: date.getMonth() === month
-          });
-        }
+        console.error('Erro ao carregar transações:', error);
       }
     });
   }
 
-  isToday(date: Date): boolean {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
+  // NOVO MÉTODO: Selecionar data no calendário
+  selectDate(day: any): void {
+    if (!day.isCurrentMonth) return;
+
+    const clickedDate = new Date(day.date);
+    clickedDate.setHours(0, 0, 0, 0);
+
+    // Se não há data inicial ou já tem início e fim, começar nova seleção
+    if (!this.selectedStartDate || (this.selectedStartDate && this.selectedEndDate)) {
+      this.selectedStartDate = clickedDate;
+      this.selectedEndDate = null;
+      this.isSelectingPeriod = true;
+    } 
+    // Se tem início mas não tem fim, definir o fim
+    else if (this.selectedStartDate && !this.selectedEndDate) {
+      if (clickedDate >= this.selectedStartDate) {
+        this.selectedEndDate = clickedDate;
+        this.isSelectingPeriod = false;
+        this.filterTransactionsByPeriod();
+      } else {
+        // Se clicar em data anterior, inverter
+        this.selectedEndDate = this.selectedStartDate;
+        this.selectedStartDate = clickedDate;
+        this.isSelectingPeriod = false;
+        this.filterTransactionsByPeriod();
+      }
+    }
+
+    this.generateCalendar();
+  }
+
+  // NOVO MÉTODO: Filtrar transações por período
+  filterTransactionsByPeriod(): void {
+    if (!this.selectedStartDate || !this.selectedEndDate) {
+      // Se não há período selecionado, mostrar todas
+      this.updateChartsWithTransactions(this.allTransactions);
+      return;
+    }
+
+    const filtered = this.allTransactions.filter(t => {
+      const tDate = new Date(t.date);
+      tDate.setHours(0, 0, 0, 0);
+      return tDate >= this.selectedStartDate! && tDate <= this.selectedEndDate!;
+    });
+
+    this.updateChartsWithTransactions(filtered);
+  }
+
+  // NOVO MÉTODO: Limpar seleção de período
+  clearPeriodSelection(): void {
+    this.selectedStartDate = null;
+    this.selectedEndDate = null;
+    this.isSelectingPeriod = false;
+    this.updateChartsWithTransactions(this.allTransactions);
+    this.generateCalendar();
+  }
+
+  // MÉTODO AUXILIAR: Verificar se data está no range
+  private isDateInRange(date: Date): boolean {
+    if (!this.selectedStartDate) return false;
+    
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+
+    if (this.selectedEndDate) {
+      return checkDate >= this.selectedStartDate && checkDate <= this.selectedEndDate;
+    } else {
+      return this.isDateEqual(checkDate, this.selectedStartDate);
+    }
+  }
+
+  // MÉTODO AUXILIAR: Verificar se duas datas são iguais
+  private isDateEqual(date1: Date | null, date2: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+    
+    return d1.getTime() === d2.getTime();
+  }
+
+  // MÉTODO AUXILIAR: Formatar período selecionado
+  getSelectedPeriodText(): string {
+    if (!this.selectedStartDate) return 'Selecione um período';
+    
+    if (!this.selectedEndDate) {
+      return `Selecionando desde ${this.selectedStartDate.toLocaleDateString('pt-BR')}...`;
+    }
+    
+    return `${this.selectedStartDate.toLocaleDateString('pt-BR')} - ${this.selectedEndDate.toLocaleDateString('pt-BR')}`;
   }
 
   previousMonth(): void {
@@ -428,3 +565,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 }
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+

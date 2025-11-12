@@ -84,6 +84,7 @@ export class ExtratoComponent implements OnInit {
       }
     });
   }
+  
 
   setFilter(filter: 'all' | 'income' | 'expense'): void {
     console.log('Filtro alterado para:', filter);
@@ -111,29 +112,35 @@ export class ExtratoComponent implements OnInit {
   }
 
   private calculateTotals(): void {
-    // Para despesas: paid = pago, unpaid/pending = não pago
-    // Para receitas: received = recebido, pending = a receber
-    this.paidTotal = this.filteredTransactions
-      .filter(t => {
-        const status = t.status as string;
-        return (t.type === 'expense' && status === 'paid') || 
-               (t.type === 'income' && status === 'received');
-      })
-      .reduce((sum, t) => sum + (t.amount || 0), 0);
+  // Filtra apenas as transações selecionadas, ou todas se nenhuma estiver selecionada
+  const hasSelection = this.filteredTransactions.some(t => t.selected);
+  const transactionsToCalculate = hasSelection 
+    ? this.filteredTransactions.filter(t => t.selected)
+    : this.filteredTransactions;
 
-    this.unpaidTotal = this.filteredTransactions
-      .filter(t => {
-        const status = t.status as string;
-        return (t.type === 'expense' && (status === 'unpaid' || status === 'pending')) || 
-               (t.type === 'income' && status === 'pending');
-      })
-      .reduce((sum, t) => sum + (t.amount || 0), 0);
+  // Para despesas: paid = pago, unpaid/pending = não pago
+  // Para receitas: received = recebido, pending = a receber
+  this.paidTotal = transactionsToCalculate
+    .filter(t => {
+      const status = t.status as string;
+      return (t.type === 'expense' && status === 'paid') || 
+             (t.type === 'income' && status === 'received');
+    })
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
 
-    this.totalAmount = this.filteredTransactions
-      .reduce((sum, t) => sum + (t.amount || 0), 0);
+  this.unpaidTotal = transactionsToCalculate
+    .filter(t => {
+      const status = t.status as string;
+      return (t.type === 'expense' && (status === 'unpaid' || status === 'pending')) || 
+             (t.type === 'income' && status === 'pending');
+    })
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
 
-    console.log('Totais calculados - Pago/Recebido:', this.paidTotal, 'Não pago/A receber:', this.unpaidTotal, 'Total:', this.totalAmount);
-  }
+  this.totalAmount = transactionsToCalculate
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+  console.log('Totais calculados - Pago/Recebido:', this.paidTotal, 'Não pago/A receber:', this.unpaidTotal, 'Total:', this.totalAmount);
+}
 
   showNewTransactionForm(): void {
     this.showNewTransaction = true;
@@ -262,10 +269,17 @@ export class ExtratoComponent implements OnInit {
     });
   }
 
+  onSelectionChange(): void {
+  this.calculateTotals();
+  this.cdr.detectChanges();
+}
+
   toggleSelectAll(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.filteredTransactions.forEach(t => t.selected = checked);
-  }
+  const checked = (event.target as HTMLInputElement).checked;
+  this.filteredTransactions.forEach(t => t.selected = checked);
+  this.calculateTotals();
+  this.cdr.detectChanges();
+}
 
   trackByTransactionId(index: number, transaction: Transaction): number {
     return transaction.id;
@@ -288,4 +302,25 @@ export class ExtratoComponent implements OnInit {
       verticalPosition: 'top'
     });
   }
+  get paidLabel(): string {
+  switch (this.activeFilter) {
+    case 'income':
+      return 'Recebido:';
+    case 'expense':
+      return 'Pago:';
+    default:
+      return 'Pago/Recebido:';
+  }
+}
+
+get unpaidLabel(): string {
+  switch (this.activeFilter) {
+    case 'income':
+      return 'A receber:';
+    case 'expense':
+      return 'Não pago:';
+    default:
+      return 'Não pago/A receber:';
+  }
+}
 }

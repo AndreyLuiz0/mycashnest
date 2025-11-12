@@ -453,3 +453,146 @@
 .dropdown-icon {
   font-size: 16px;
 }
+
+
+
+.period-info {
+  margin-bottom: 12px;
+  
+  .period-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    
+    .period-text {
+      flex: 1;
+    }
+    
+    .clear-period-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+// Instruções do calendário
+.calendar-instructions {
+  text-align: center;
+  margin: 8px 0;
+  color: #666;
+  font-style: italic;
+}
+
+// Estilos do calendário
+.calendar {
+  .calendar-grid {
+    .day {
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &.clickable:hover {
+        background: #f0f0f0;
+        transform: scale(1.1);
+      }
+      
+      &.other-month {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      
+      // Data selecionada no range
+      &.selected {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        font-weight: 600;
+      }
+      
+      // Início do range
+      &.range-start {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: -2px;
+          width: 50%;
+          height: 100%;
+          background: rgba(102, 126, 234, 0.2);
+          z-index: -1;
+        }
+      }
+      
+      // Fim do range
+      &.range-end {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -2px;
+          width: 50%;
+          height: 100%;
+          background: rgba(102, 126, 234, 0.2);
+          z-index: -1;
+        }
+      }
+      
+      // Se for início e fim ao mesmo tempo (1 dia selecionado)
+      &.range-start.range-end {
+        &::after,
+        &::before {
+          display: none;
+        }
+      }
+      
+      // Hoje + selecionado
+      &.today.selected {
+        box-shadow: 0 0 0 2px #667eea inset;
+      }
+    }
+  }
+}
+
+// Animação para seleção
+@keyframes pulseSelection {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.calendar .day.selected {
+  animation: pulseSelection 0.3s ease;
+}

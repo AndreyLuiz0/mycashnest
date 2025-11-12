@@ -1,0 +1,61 @@
+<div class="chatbot-container">
+  <!-- Botão flutuante -->
+  <button 
+    *ngIf="!isOpen" 
+    class="chat-toggle"
+    (click)="toggleChat()"
+    aria-label="Abrir chat">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-width="2"/>
+    </svg>
+  </button>
+
+  <!-- Janela do chat -->
+  <div *ngIf="isOpen" class="chat-window">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-content">
+        <div class="bot-avatar">🤖</div>
+        <div>
+          <h3>Assistente Virtual</h3>
+          <span class="status">Online</span>
+        </div>
+      </div>
+      <button (click)="toggleChat()" class="close-btn" aria-label="Fechar chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M18 6L6 18M6 6l12 12" stroke-width="2"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mensagens -->
+    <div class="chat-messages" #messagesContainer>
+      <div *ngFor="let msg of messages" 
+           [class.bot-message]="msg.isBot" 
+           [class.user-message]="!msg.isBot"
+           [class.option-message]="msg.isOption">
+        <div class="message-bubble" 
+             [class.clickable]="msg.isOption"
+             (click)="msg.action && msg.action()">
+          {{ msg.text }}
+        </div>
+      </div>
+      
+      <!-- Typing indicator -->
+      <div *ngIf="isTyping" class="bot-message">
+        <div class="message-bubble typing">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="chat-footer">
+      <button (click)="resetChat()" class="restart-btn">
+        🔄 Reiniciar conversa
+      </button>
+    </div>
+  </div>
+</div>

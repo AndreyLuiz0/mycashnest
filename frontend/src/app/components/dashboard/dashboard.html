@@ -9,9 +9,9 @@
     <nav class="header-nav">
       <a routerLink="/extrato" class="nav-link">Extrato</a>
       <a routerLink="/dashboard" class="nav-link active">Inicio</a>
-      <button class="icon-btn">
+      <!-- <button class="icon-btn">
         <span class="icon">⚙️</span>
-      </button>
+      </button> -->
       <div class="profile-menu-wrapper">
     <button class="icon-btn" (click)="toggleProfileMenu()">
       <span class="icon">👤</span>
@@ -47,34 +47,59 @@
       </div>
 
       <!-- Margem do Período -->
-      <div class="card period-margin">
-        <h3>Margem Periodo</h3>
-        <div class="margin-content">
-          <div class="donut-chart">
-            <canvas baseChart
-              [data]="marginChartData"
-              [type]="'doughnut'"
-              [options]="donutOptions">
-            </canvas>
-          </div>
-          <div class="calendar">
-            <div class="calendar-header">
-              <button class="nav-btn" (click)="previousMonth()">‹</button>
-              <span class="month-year">{{ currentMonth | date:'MMMM yyyy' }}</span>
-              <button class="nav-btn" (click)="nextMonth()">›</button>
-            </div>
-            <div class="calendar-grid">
-              <div class="day-header" *ngFor="let day of weekDays">{{ day }}</div>
-              <div class="day" 
-                   *ngFor="let day of calendarDays" 
-                   [class.active]="day.active"
-                   [class.today]="day.isToday">
-                {{ day.day }}
-              </div>
-            </div>
-          </div>
+     <!-- Substituir a seção do calendário no dashboard.html -->
+
+<div class="card period-margin">
+  <h3>Margem Periodo</h3>
+  
+  <!-- Informação do período selecionado -->
+  <div class="period-info" *ngIf="selectedStartDate || selectedEndDate">
+    <div class="period-badge">
+      <span class="period-text">{{ getSelectedPeriodText() }}</span>
+      <button class="clear-period-btn" (click)="clearPeriodSelection()" title="Limpar período">
+        ✕
+      </button>
+    </div>
+  </div>
+  
+  <div class="margin-content">
+    <div class="donut-chart">
+      <canvas baseChart
+        [data]="marginChartData"
+        [type]="'doughnut'"
+        [options]="donutOptions">
+      </canvas>
+    </div>
+    <div class="calendar">
+      <div class="calendar-header">
+        <button class="nav-btn" (click)="previousMonth()">‹</button>
+        <span class="month-year">{{ currentMonth | date:'MMMM yyyy' }}</span>
+        <button class="nav-btn" (click)="nextMonth()">›</button>
+      </div>
+      
+      <!-- Instruções -->
+      <div class="calendar-instructions" *ngIf="!selectedStartDate">
+        <small>Clique em duas datas para selecionar um período</small>
+      </div>
+      
+      <div class="calendar-grid">
+        <div class="day-header" *ngFor="let day of weekDays">{{ day }}</div>
+        <div class="day" 
+             *ngFor="let day of calendarDays" 
+             [class.active]="day.active"
+             [class.today]="day.isToday"
+             [class.selected]="day.isSelected"
+             [class.range-start]="day.isRangeStart"
+             [class.range-end]="day.isRangeEnd"
+             [class.other-month]="!day.isCurrentMonth"
+             [class.clickable]="day.isCurrentMonth"
+             (click)="selectDate(day)">
+          {{ day.day }}
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       <!-- Perfil do Usuário e Últimos Lançamentos -->
       <div class="card user-profile">
