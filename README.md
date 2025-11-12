@@ -1,21 +1,21 @@
-# Sistema Financeiro - Mycashnest
+# Mycashnest - Sistema Financeiro 
 
 Sistema financeiro completo desenvolvido em Angular com backend Node.js, baseado nas telas fornecidas.
 
-## 🚀 Funcionalidades
+##  Funcionalidades
 
 - **Tela de Login**: Autenticação de usuários com opção de cadastro
 - **Dashboard**: Visualização de dados financeiros com gráficos e estatísticas
 - **Extrato**: Lista completa de transações com filtros e gerenciamento
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 - Node.js (versão 16 ou superior)
 - Angular CLI
-- MySQL
+- SQLite
 - npm ou yarn
 
-## 🛠️ Instalação
+## Instalação
 
 ### Backend
 
@@ -63,7 +63,7 @@ ng serve
 
 O frontend estará rodando em `http://localhost:4200`
 
-## 🗄️ Estrutura do Banco de Dados
+##  Estrutura do Banco de Dados
 
 ### Tabela `users`
 - `id`: ID único do usuário
@@ -85,7 +85,7 @@ O frontend estará rodando em `http://localhost:4200`
 - `created_at`: Data de criação
 - `updated_at`: Data de atualização
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### Autenticação
 - `POST /api/auth/register` - Cadastro de usuário
@@ -98,7 +98,7 @@ O frontend estará rodando em `http://localhost:4200`
 - `DELETE /api/transactions/:id` - Excluir transação
 - `GET /api/transactions/dashboard` - Dados para dashboard
 
-## 🎨 Telas Implementadas
+##  Telas Implementadas
 
 ### 1. Tela de Login
 - Design baseado na imagem fornecida
@@ -122,21 +122,21 @@ O frontend estará rodando em `http://localhost:4200`
 - Exclusão de transações
 - Resumo financeiro
 
-## 🔐 Autenticação
+##  Autenticação
 
 O sistema utiliza JWT (JSON Web Tokens) para autenticação:
 - Tokens são armazenados no localStorage
 - Interceptor automático para adicionar token nas requisições
 - Guard para proteger rotas autenticadas
 
-## 📱 Responsividade
+##  Responsividade
 
 O sistema é totalmente responsivo e funciona em:
 - Desktop
 - Tablet
 - Mobile
 
-## 🎯 Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 ### Frontend
 - Angular 20
@@ -153,20 +153,16 @@ O sistema é totalmente responsivo e funciona em:
 - bcryptjs
 - CORS
 
-## 🚀 Como Usar
+##  Como Usar
 
 1. Acesse `http://localhost:4200`
 2. Faça login ou cadastre-se
 3. Explore o dashboard com seus dados financeiros
 4. Gerencie suas transações no extrato
 
-## 📝 Dados de Teste
 
-O sistema inclui dados de exemplo para demonstração:
-- Email: `teste@email.com`
-- Senha: `password`
 
-## 🔧 Configuração de Desenvolvimento
+##  Configuração de Desenvolvimento
 
 Para desenvolvimento, certifique-se de que:
 - O backend está rodando na porta 3000
@@ -174,7 +170,7 @@ Para desenvolvimento, certifique-se de que:
 - O MySQL está configurado e rodando
 - As variáveis de ambiente estão configuradas
 
-## 📄 Licença
+##  Licença
 
 Este projeto é para fins educacionais e de demonstração.
 
